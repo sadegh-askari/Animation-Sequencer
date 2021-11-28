@@ -21,18 +21,22 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override void AddTweenToSequence(Sequence animationSequence)
         {
-            animationSequence.SetDelay(Delay);
-            animationSequence.AppendCallback(() =>
-            {
-                particleSystem.Play();
-            });
-            
-            animationSequence.AppendInterval(duration);
-            animationSequence.AppendCallback(FinishParticles);
+            Tween tween = new CallbackTweenAction(PlayParticles, PlayParticles, FinishParticles).GenerateTween(duration);
+            tween.SetDelay(Delay);
+
+            if (FlowType == FlowType.Join)
+                animationSequence.Join(tween);
+            else
+                animationSequence.Append(tween);
         }
 
         public override void ResetToInitialState()
         {
+        }
+
+        private void PlayParticles()
+        {
+            particleSystem.Play();
         }
 
         private void FinishParticles()

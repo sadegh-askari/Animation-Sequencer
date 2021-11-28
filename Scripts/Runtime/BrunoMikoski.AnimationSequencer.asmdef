@@ -1,8 +1,10 @@
 {
     "name": "BrunoMikoski.AnimationSequencer",
+    "rootNamespace": "",
     "references": [
         "DOTween.Modules",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "UniTask"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
