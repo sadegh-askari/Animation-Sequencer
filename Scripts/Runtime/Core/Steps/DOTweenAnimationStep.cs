@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Security.Permissions;
 using DG.Tweening;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Tween Target";
         [SerializeField]
         private int loopCount;
-        
+
         [SerializeField]
         private LoopType loopType;
         [SerializeReference]

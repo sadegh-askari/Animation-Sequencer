@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Events;
@@ -63,6 +65,19 @@ namespace BrunoMikoski.AnimationSequencer
             playingSequence?.Kill();
         }
 
+        public void Play(TweenCancelBehaviour cancelBehaviour, CancellationToken ct, Action onCompleteCallback = null)
+        {
+            ct.RegisterWithoutCaptureExecutionContext(() =>
+            {
+                if(cancelBehaviour == TweenCancelBehaviour.Kill)
+                    Kill();
+                else
+                    Complete();
+            });
+            
+            Play(onCompleteCallback);
+        }
+        
         public void Play(Action onCompleteCallback = null)
         {
             DOTween.Kill(this);
