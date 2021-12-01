@@ -3,6 +3,7 @@ using System.Collections;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Sirenix.OdinInspector.Editor.Drawers;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -17,34 +18,24 @@ namespace BrunoMikoski.AnimationSequencer
             Backward
         }
 
-        [SerializeReference]
-        private AnimationStepBase[] animationSteps = new AnimationStepBase[0];
-        [SerializeField]
-        private UpdateType updateType = UpdateType.Normal;
-        [SerializeField]
-        private bool timeScaleIndependent = false;
-        [SerializeField]
-        private bool playOnAwake;
-        [SerializeField]
-        private bool pauseOnAwake;
-        [SerializeField]
-        private PlayType playType = PlayType.Forward;
-        [SerializeField]
-        private int loops = 0;
-        [SerializeField]
-        private LoopType loopType = LoopType.Restart;
-        [SerializeField]
-        private UnityEvent onStartEvent = new UnityEvent();
+        [SerializeReference] private AnimationStepBase[] animationSteps = new AnimationStepBase[0];
+        [SerializeField] private UpdateType updateType = UpdateType.Normal;
+        [SerializeField] private bool timeScaleIndependent = false;
+        [SerializeField] private bool playOnAwake;
+        [SerializeField] private bool pauseOnAwake;
+        [SerializeField] private PlayType playType = PlayType.Forward;
+        [SerializeField] private int loops = 0;
+        [SerializeField] private LoopType loopType = LoopType.Restart;
+        [SerializeField] private UnityEvent onStartEvent = new UnityEvent();
         public UnityEvent OnStartEvent => onStartEvent;
-        [SerializeField]
-        private UnityEvent onFinishedEvent = new UnityEvent();
+        [SerializeField] private UnityEvent onFinishedEvent = new UnityEvent();
         public UnityEvent OnFinishedEvent => onFinishedEvent;
-        [SerializeField]
-        private UnityEvent onProgressEvent = new UnityEvent();
+        [SerializeField] private UnityEvent onProgressEvent = new UnityEvent();
         public UnityEvent OnProgressEvent => onProgressEvent;
 
         private Sequence playingSequence;
         public Sequence PlayingSequence => playingSequence;
+        private TweenCancelBehaviour _cancelBehaviour;
 
         public bool IsPlaying => playingSequence != null && playingSequence.IsActive() && playingSequence.IsPlaying();
         public bool IsPaused => playingSequence != null && playingSequence.IsActive() && !playingSequence.IsPlaying();
@@ -67,17 +58,25 @@ namespace BrunoMikoski.AnimationSequencer
 
         public void Play(TweenCancelBehaviour cancelBehaviour, CancellationToken ct, Action onCompleteCallback = null)
         {
-            ct.RegisterWithoutCaptureExecutionContext(() =>
-            {
-                if(cancelBehaviour == TweenCancelBehaviour.Kill)
-                    Kill();
-                else
-                    Complete();
-            });
-            
+            _cancelBehaviour = cancelBehaviour;
+            ct.RegisterWithoutCaptureExecutionContext(Cancel);
+
             Play(onCompleteCallback);
         }
-        
+
+        public void Cancel()
+        {
+            if (animationSteps.Length == 0)
+                return;
+            
+            //if (playingSequence.ElapsedPercentage() < 1)
+            {
+                //if (_cancelBehaviour == TweenCancelBehaviour.Kill)
+                    Kill(_cancelBehaviour == TweenCancelBehaviour.Complete);
+
+            }
+        }
+
         public void Play(Action onCompleteCallback = null)
         {
             DOTween.Kill(this);
@@ -181,10 +180,7 @@ namespace BrunoMikoski.AnimationSequencer
                     onFinishedEvent.Invoke();
                 }
             });
-            sequence.OnUpdate(() =>
-            {
-                onProgressEvent.Invoke();
-            });
+            sequence.OnUpdate(() => { onProgressEvent.Invoke(); });
             sequence.OnComplete(() =>
             {
                 if (playType == PlayType.Forward)
