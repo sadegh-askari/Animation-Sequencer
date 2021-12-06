@@ -3,7 +3,6 @@ using System.Collections;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using Sirenix.OdinInspector.Editor.Drawers;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -12,21 +11,31 @@ namespace BrunoMikoski.AnimationSequencer
     [DisallowMultipleComponent]
     public class AnimationSequencerController : MonoBehaviour
     {
-        private enum PlayType
+        public enum PlayType
         {
             Forward,
             Backward
         }
 
-        [SerializeReference] private AnimationStepBase[] animationSteps = new AnimationStepBase[0];
-        [SerializeField] private UpdateType updateType = UpdateType.Normal;
-        [SerializeField] private bool timeScaleIndependent = false;
-        [SerializeField] private bool playOnAwake;
-        [SerializeField] private bool pauseOnAwake;
-        [SerializeField] private PlayType playType = PlayType.Forward;
-        [SerializeField] private int loops = 0;
-        [SerializeField] private LoopType loopType = LoopType.Restart;
-        [SerializeField] private UnityEvent onStartEvent = new UnityEvent();
+        [SerializeReference]
+        private AnimationStepBase[] animationSteps = new AnimationStepBase[0];
+        [SerializeField]
+        private UpdateType updateType = UpdateType.Normal;
+        [SerializeField]
+        private bool timeScaleIndependent = false;
+        [SerializeField]
+        private bool playOnAwake;
+        [SerializeField]
+        private bool pauseOnAwake;
+        [SerializeField]
+        private PlayType playType = PlayType.Forward;
+        [SerializeField]
+        private int loops = 0;
+        [SerializeField]
+        private LoopType loopType = LoopType.Restart;
+        
+        [SerializeField]
+        private UnityEvent onStartEvent = new UnityEvent();
         public UnityEvent OnStartEvent => onStartEvent;
         [SerializeField] private UnityEvent onFinishedEvent = new UnityEvent();
         public UnityEvent OnFinishedEvent => onFinishedEvent;
@@ -55,13 +64,13 @@ namespace BrunoMikoski.AnimationSequencer
             DOTween.Kill(this);
             playingSequence?.Kill();
         }
-
+        
         public void Play(TweenCancelBehaviour cancelBehaviour, CancellationToken ct, Action onCompleteCallback = null)
         {
             _cancelBehaviour = cancelBehaviour;
             ct.RegisterWithoutCaptureExecutionContext(Cancel);
 
-            Play(onCompleteCallback);
+            Play(PlayType.Forward, onCompleteCallback);
         }
 
         public void Cancel()
@@ -72,12 +81,12 @@ namespace BrunoMikoski.AnimationSequencer
             //if (playingSequence.ElapsedPercentage() < 1)
             {
                 //if (_cancelBehaviour == TweenCancelBehaviour.Kill)
-                    Kill(_cancelBehaviour == TweenCancelBehaviour.Complete);
+                Kill(_cancelBehaviour == TweenCancelBehaviour.Complete);
 
             }
         }
 
-        public void Play(Action onCompleteCallback = null)
+        public virtual void Play(PlayType direction = PlayType.Forward, Action onCompleteCallback = null)
         {
             DOTween.Kill(this);
             DOTween.Kill(playingSequence);
@@ -101,6 +110,26 @@ namespace BrunoMikoski.AnimationSequencer
                     playingSequence.Play();
                     break;
             }
+        }
+
+        public void SetTime(float seconds, bool andPlay = true)
+        {
+            if (playingSequence == null)
+                Play();
+
+            float duration = playingSequence.Duration();
+            float progress = Mathf.Clamp01(seconds / duration);
+            SetProgress(progress, andPlay);
+        }
+        
+        public void SetProgress(float progress, bool andPlay = true)
+        {
+            progress = Mathf.Clamp01(progress);
+            
+            if (playingSequence == null)
+                Play();
+
+            playingSequence.Goto(progress, andPlay);
         }
 
         public void TogglePause()
