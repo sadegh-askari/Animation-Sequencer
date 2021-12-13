@@ -83,5 +83,14 @@ namespace BrunoMikoski.AnimationSequencer
                 _tokenSource = null;
             }
         }
+        
+        public override string GetDisplayNameForEditor(int index)
+        {
+            string clipName = "Animation";
+            if (_animationClip != null)
+                clipName = _animationClip.name;
+            
+            return $"{index}. Play {clipName} Clip";
+        }
     }
 }

@@ -9,19 +9,26 @@ namespace BrunoMikoski.AnimationSequencer
     public sealed class InvokeCallbackAnimationStep : AnimationStepBase
     {
         [SerializeField]
-        private UnityEvent callback = new UnityEvent();
+        private UnityEvent callback;// = new UnityEvent();
+        [SerializeField]
+        private UnityEvent _resetCallback;
         
-        public override string DisplayName => "Invoke Callback Step";
-        
+        public override string DisplayName => "Invoke Callback";
 
         public override void AddTweenToSequence(Sequence animationSequence)
         {
-            animationSequence.SetDelay(Delay);
-            animationSequence.AppendCallback(() => callback.Invoke());
+            Tween tween = new CallbackTweenAction(null, null, () =>callback.Invoke()).GenerateTween(0);
+            tween.SetDelay(Delay);
+
+            if (FlowType == FlowType.Join)
+                animationSequence.Join(tween);
+            else
+                animationSequence.Append(tween);
         }
 
         public override void ResetToInitialState()
         {
+            _resetCallback.Invoke();
         }
 
         public override string GetDisplayNameForEditor(int index)
@@ -31,10 +38,12 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 if (callback.GetPersistentTarget(i) == null)
                     continue;
-                
-                persistentTargetNames = $"{string.Join(", ", callback.GetPersistentTarget(i).name).Truncate(45)}";
+
+                persistentTargetNames = string.IsNullOrEmpty(persistentTargetNames) ?
+                    callback.GetPersistentTarget(i).name :
+                    string.Join(", ", callback.GetPersistentTarget(i).name, persistentTargetNames).Truncate(45);
             }
-            
+
             return $"{index}. {DisplayName}: {persistentTargetNames}";
         }
     }

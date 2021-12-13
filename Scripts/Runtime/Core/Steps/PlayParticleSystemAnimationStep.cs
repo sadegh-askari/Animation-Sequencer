@@ -1,6 +1,7 @@
 using System;
 using DG.Tweening;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace BrunoMikoski.AnimationSequencer
 {
@@ -12,7 +13,6 @@ namespace BrunoMikoski.AnimationSequencer
 
         [SerializeField]
         private float duration = 1;
-
 
         [SerializeField]
         private bool stopEmittingWhenOver;
@@ -36,6 +36,9 @@ namespace BrunoMikoski.AnimationSequencer
 
         private void PlayParticles()
         {
+            if (particleSystem.gameObject.scene.name == null)
+                particleSystem = Object.Instantiate(particleSystem);
+            
             particleSystem.Play();
         }
 
