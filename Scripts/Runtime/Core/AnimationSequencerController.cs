@@ -71,6 +71,12 @@ namespace BrunoMikoski.AnimationSequencer
             _cancelBehaviour = cancelBehaviour;
             ct.RegisterWithoutCaptureExecutionContext(Cancel);
 
+            if (ct.IsCancellationRequested)
+            {
+                Cancel();
+                return;
+            }
+            
             Play(onCompleteCallback);
         }
 
