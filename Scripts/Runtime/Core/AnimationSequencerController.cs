@@ -65,7 +65,7 @@ namespace BrunoMikoski.AnimationSequencer
         {
             ClearPlayingSequence();
         }
-        
+
         public void Play(TweenCancelBehaviour cancelBehaviour, CancellationToken ct, Action onCompleteCallback = null)
         {
             _cancelBehaviour = cancelBehaviour;
@@ -84,12 +84,11 @@ namespace BrunoMikoski.AnimationSequencer
         {
             if (animationSteps.Length == 0)
                 return;
-            
+
             //if (playingSequence.ElapsedPercentage() < 1)
             {
                 //if (_cancelBehaviour == TweenCancelBehaviour.Kill)
                 Kill(_cancelBehaviour == TweenCancelBehaviour.Complete);
-
             }
         }
 
@@ -159,7 +158,7 @@ namespace BrunoMikoski.AnimationSequencer
         public virtual void SetProgress(float progress, bool andPlay = true)
         {
             progress = Mathf.Clamp01(progress);
-            
+
             if (playingSequence == null)
                 Play();
 
@@ -227,7 +226,22 @@ namespace BrunoMikoski.AnimationSequencer
 
             for (int i = 0; i < animationSteps.Length; i++)
             {
-                animationSteps[i].AddTweenToSequence(sequence);
+                AnimationStepBase step = animationSteps[i];
+                if (step != null)
+                {
+                    step.AddTweenToSequence(sequence);
+                }
+                else
+                {
+                    string hierarchy = name;
+                    Transform p = transform;
+                    while ((p = p.parent) != null)
+                    {
+                        hierarchy = p.name + "/" + hierarchy;
+                    }
+                    
+                    Debug.LogError($"AnimationStep at {i} is null in object `{hierarchy}`");
+                }
             }
 
             sequence.SetTarget(this);

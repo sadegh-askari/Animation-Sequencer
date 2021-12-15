@@ -21,9 +21,13 @@ namespace BrunoMikoski.AnimationSequencer
         public override void AddTweenToSequence(Sequence animationSequence)
         {
             Sequence sequence = DOTween.Sequence();
-            for (int i = 0; i < actions.Length; i++)
+            
+            foreach (DOTweenActionBase action in actions)
             {
-                Tween tween = actions[i].GenerateTween(target, duration);
+                if (action == null)
+                    continue;
+                
+                Tween tween = action.GenerateTween(target, duration);
                 tween.SetDelay(Delay);
                 tween.SetLoops(loopCount, loopType);
                 sequence.Join(tween);
