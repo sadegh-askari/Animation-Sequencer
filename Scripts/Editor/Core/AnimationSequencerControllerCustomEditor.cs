@@ -196,6 +196,7 @@ namespace BrunoMikoski.AnimationSequencer
             
             SerializedProperty updateTypeSerializedProperty = serializedObject.FindProperty("updateType");
             SerializedProperty timeScaleIndependentSerializedProperty = serializedObject.FindProperty("timeScaleIndependent");
+            SerializedProperty timeScaleSerializedProperty = serializedObject.FindProperty("timeScale");
             SerializedProperty sequenceDirectionSerializedProperty = serializedObject.FindProperty("playType");
             SerializedProperty loopsSerializedProperty = serializedObject.FindProperty("loops");
             SerializedProperty loopTypeSerializedProperty = serializedObject.FindProperty("loopType");
@@ -204,6 +205,7 @@ namespace BrunoMikoski.AnimationSequencer
             using (EditorGUI.ChangeCheckScope changedCheck = new EditorGUI.ChangeCheckScope())
             {
                 EditorGUILayout.PropertyField(timeScaleIndependentSerializedProperty);
+                EditorGUILayout.PropertyField(timeScaleSerializedProperty);
                 EditorGUILayout.PropertyField(sequenceDirectionSerializedProperty);
                 EditorGUILayout.PropertyField(updateTypeSerializedProperty);
                 EditorGUILayout.PropertyField(autoKillSerializedProperty);
@@ -394,18 +396,18 @@ namespace BrunoMikoski.AnimationSequencer
         {
             GUILayout.FlexibleSpace();
             EditorGUI.BeginChangeCheck();
-            float tweenTimescale = 1;
+            // float tweenTimescale = 1;
 
-            if (sequencerController.PlayingSequence != null)
-                tweenTimescale = sequencerController.PlayingSequence.timeScale;
+            // if (sequencerController.PlayingSequence != null)
+            //     tweenTimescale = sequencerController.PlayingSequence.timeScale;
 
-            EditorGUILayout.LabelField("TimeScale");
-            tweenTimescale = EditorGUILayout.Slider(tweenTimescale, 0, 2);
+            // EditorGUILayout.LabelField("TimeScale");
+            // tweenTimescale = EditorGUILayout.Slider(tweenTimescale, 0, 2);
 
             if (EditorGUI.EndChangeCheck())
             {
                 if (sequencerController.PlayingSequence != null)
-                    sequencerController.PlayingSequence.timeScale = tweenTimescale;
+                    sequencerController.PlayingSequence.timeScale = sequencerController.TimeScale;
             }
 
             GUILayout.FlexibleSpace();

@@ -29,6 +29,12 @@ namespace BrunoMikoski.AnimationSequencer
         private bool pauseOnAwake;
         [SerializeField]
         private PlayType playType = PlayType.Forward;
+
+        [SerializeField] [Range(0, 10)]
+        private float timeScale = 1;
+
+        public float TimeScale => timeScale;
+        
         [SerializeField]
         private int loops = 0;
         [SerializeField]
@@ -100,7 +106,8 @@ namespace BrunoMikoski.AnimationSequencer
                 onFinishedEvent.AddListener(onCompleteCallback.Invoke);
 
             playingSequence = GenerateSequence();
-
+            playingSequence.timeScale = timeScale;
+            
             switch (playType)
             {
                 case PlayType.Backward:
