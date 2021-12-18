@@ -221,8 +221,9 @@ namespace BrunoMikoski.AnimationSequencer
             playingSequence.Kill(complete);
         }
 
-        public virtual IEnumerator PlayEnumerator()
+        public virtual IEnumerator PlayEnumerator(TweenCancelBehaviour cancelBehaviour)
         {
+            _cancelBehaviour = cancelBehaviour;
             Play();
             yield return playingSequence.WaitForCompletion();
         }
