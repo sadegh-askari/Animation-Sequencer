@@ -18,9 +18,11 @@ namespace BrunoMikoski.AnimationSequencer
         private int _propertyId;
         private Renderer _targetRenderer;
         private Color _previousColor;
+        private Material _material;
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
+
             _propertyId = Shader.PropertyToID(_propertyName);
             if (_targetRenderer == null)
             {
@@ -31,18 +33,24 @@ namespace BrunoMikoski.AnimationSequencer
                     return null;
                 }
             }
+            _material = _targetRenderer.sharedMaterial;
+            if (Application.isPlaying)
+                _material = _targetRenderer.material;
 
-            _previousColor = _targetRenderer.material.color;
-            TweenerCore<Color, Color, ColorOptions> materialTween = _targetRenderer.material.DOColor(_color, _propertyId, duration);
+            _previousColor = _material.GetColor(_propertyId);
+            TweenerCore<Color, Color, ColorOptions> materialTween = _material.DOColor(_color, _propertyId, duration);
             return materialTween;
         }
 
         public override void ResetToInitialState()
         {
+            
             if (_targetRenderer == null)
                 return;
-
-            _targetRenderer.material.SetColor(_propertyId, _previousColor);
+            _material = _targetRenderer.sharedMaterial;
+            if (Application.isPlaying)
+                _material = _targetRenderer.material;
+            _material.SetColor(_propertyId, _previousColor);
         }
     }
 }
