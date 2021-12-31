@@ -362,7 +362,7 @@ namespace BrunoMikoski.AnimationSequencer
                         sequencerController.Play();
                 }
             }
-            showStepsPanel = false;
+            //showStepsPanel = false;
         }
 
         private void DrawProgressSlider()
