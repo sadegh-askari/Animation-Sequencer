@@ -58,6 +58,7 @@ namespace BrunoMikoski.AnimationSequencer
                 //playable.SetSpeed(_speed);
 
                 await UniTask.Delay((int) (duration * 1000), cancellationToken: ct);
+                
             }
             catch (OperationCanceledException e)
             {
