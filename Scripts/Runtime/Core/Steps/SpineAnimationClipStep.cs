@@ -12,7 +12,7 @@ namespace BrunoMikoski.AnimationSequencer
         //[SerializeField] private float _speed;
         [SerializeField] private SkeletonAnimation  _skeletonAnimation;
 
-        [SerializeField] private string _clipName;
+        [SerializeField] private AnimationReferenceAsset _animationRefrence;
         [SerializeField] private int _loopCount;
 
         public override string DisplayName => "Spine Animation Clip";
@@ -31,8 +31,9 @@ namespace BrunoMikoski.AnimationSequencer
 
         private void PlayAnimation()
         {
-            bool loop = _loopCount > 0;
-            TrackEntry entry = _skeletonAnimation.AnimationState.SetAnimation(0, _clipName, loop);
+            bool loop = _loopCount != 0;
+            _skeletonAnimation.AnimationState.SetEmptyAnimation(0, 0);
+            TrackEntry entry = _skeletonAnimation.AnimationState.SetAnimation(0, _animationRefrence, loop);
         }
         
 
