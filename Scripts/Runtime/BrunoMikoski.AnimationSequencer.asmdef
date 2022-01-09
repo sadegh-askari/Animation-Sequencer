@@ -6,7 +6,9 @@
         "Unity.TextMeshPro",
         "UniTask",
         "UniTask.DOTween",
-        "Audoty"
+        "Audoty",
+        "spine-unity",
+        "spine-csharp"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
