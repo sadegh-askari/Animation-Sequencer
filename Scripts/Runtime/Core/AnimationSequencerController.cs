@@ -34,7 +34,7 @@ namespace BrunoMikoski.AnimationSequencer
         private float timeScale = 1;
 
         public float TimeScale => timeScale;
-        
+
         [SerializeField]
         private int loops = 0;
         [SerializeField]
@@ -82,7 +82,7 @@ namespace BrunoMikoski.AnimationSequencer
                 Cancel();
                 return;
             }
-            
+
             Play(onCompleteCallback);
         }
 
@@ -101,13 +101,13 @@ namespace BrunoMikoski.AnimationSequencer
         public virtual void Play(Action onCompleteCallback = null)
         {
             ClearPlayingSequence();
-            
+
             if (onCompleteCallback != null)
                 onFinishedEvent.AddListener(onCompleteCallback.Invoke);
 
             playingSequence = GenerateSequence();
             playingSequence.timeScale = timeScale;
-            
+
             switch (playType)
             {
                 case PlayType.Backward:
@@ -131,10 +131,10 @@ namespace BrunoMikoski.AnimationSequencer
 
             if (onCompleteCallback != null)
                 onFinishedEvent.AddListener(onCompleteCallback.Invoke);
-            
+
             if (restFirst)
                 SetProgress(0);
-            
+
             playingSequence.PlayForward();
         }
 
@@ -145,10 +145,10 @@ namespace BrunoMikoski.AnimationSequencer
 
             if (onCompleteCallback != null)
                 onFinishedEvent.AddListener(onCompleteCallback.Invoke);
-            
+
             if (completeFirst)
                 SetProgress(1);
-            
+
             playingSequence.PlayBackwards();
         }
 
@@ -158,10 +158,10 @@ namespace BrunoMikoski.AnimationSequencer
                 Play();
 
             float duration = playingSequence.Duration();
-            float progress = Mathf.Clamp01(seconds / duration);
+            float progress = Mathf.Clamp01(seconds/duration);
             SetProgress(progress, andPlay);
         }
-        
+
         public virtual void SetProgress(float progress, bool andPlay = true)
         {
             progress = Mathf.Clamp01(progress);
@@ -203,6 +203,36 @@ namespace BrunoMikoski.AnimationSequencer
                 return;
 
             playingSequence.Complete(withCallbacks);
+        }
+
+        public virtual async UniTask ForceRewind(float rewindTimescale = 1)
+        {
+            if (playingSequence == null)
+            {
+                return;
+            }
+
+            float duration = playingSequence.Duration();
+            playingSequence.timeScale = rewindTimescale;
+            playingSequence.Goto(duration);
+            playingSequence.PlayBackwards();
+
+            await UniTask.Delay(TimeSpan.FromSeconds(duration/rewindTimescale));
+        }
+
+        public virtual async UniTask ForcePlay(float timescale = 1)
+        {
+            if (playingSequence == null)
+            {
+                return;
+            }
+
+            playingSequence.timeScale = timescale;
+            playingSequence.Goto(0);
+            playingSequence.PlayForward();
+            
+            float duration = playingSequence.Duration();
+            await UniTask.Delay(TimeSpan.FromSeconds(duration/timescale));
         }
 
         public virtual void Rewind(bool includeDelay = true)
@@ -247,7 +277,7 @@ namespace BrunoMikoski.AnimationSequencer
                     {
                         hierarchy = p.name + "/" + hierarchy;
                     }
-                    
+
                     Debug.LogError($"AnimationStep at {i} is null in object `{hierarchy}`");
                 }
             }
