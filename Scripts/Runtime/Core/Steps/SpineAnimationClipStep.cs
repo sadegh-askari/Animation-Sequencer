@@ -35,10 +35,11 @@ namespace BrunoMikoski.AnimationSequencer
             _skeletonAnimation.AnimationState.SetEmptyAnimation(0, 0);
             TrackEntry entry = _skeletonAnimation.AnimationState.SetAnimation(0, _animationRefrence, loop);
         }
-        
+
 
         private void StopAnimation()
         {
+            //_skeletonAnimation.AnimationState.SetEmptyAnimation(0, 0);
         }
         
         public override void ResetToInitialState()
