@@ -124,6 +124,13 @@ namespace BrunoMikoski.AnimationSequencer
             }
         }
 
+        public virtual async UniTask PlayAsync()
+        {
+            UniTaskCompletionSource cs = new UniTaskCompletionSource();
+            Play(() => cs.TrySetResult());
+            await cs.Task;
+        }
+
         public virtual void PlayForward(bool restFirst = true, Action onCompleteCallback = null)
         {
             if (playingSequence == null)
