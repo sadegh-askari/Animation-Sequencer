@@ -17,5 +17,10 @@ namespace BrunoMikoski.AnimationSequencer
         {
             return position;
         }
+
+        public override void ResetToInitialState()
+        {
+            
+        }
     }
 }
