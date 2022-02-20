@@ -28,7 +28,7 @@ namespace BrunoMikoski.AnimationSequencer
         [SerializeField]
         private bool pauseOnAwake;
         [SerializeField]
-        private PlayType playType = PlayType.Forward;
+        public PlayType playType = PlayType.Forward;
 
         [SerializeField] [Range(0, 10)]
         private float timeScale = 1;

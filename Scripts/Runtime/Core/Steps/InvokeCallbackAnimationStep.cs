@@ -17,7 +17,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override void AddTweenToSequence(Sequence animationSequence)
         {
-            Tween tween = new CallbackTweenAction(null, null, () =>callback.Invoke()).GenerateTween(0);
+            Tween tween = new CallbackTweenAction(null, null, () =>callback.Invoke()).GenerateTween(0.01f);
             tween.SetDelay(Delay);
 
             if (FlowType == FlowType.Join)
