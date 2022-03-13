@@ -14,6 +14,7 @@ namespace BrunoMikoski.AnimationSequencer
         //[SerializeField] private float _speed;
         [SerializeField] private AnimationClip _animationClip;
         [SerializeField] private int _loopCount;
+        [SerializeField] private int _playbackSpeed = 1;
 
         private Animator _animator;
         private CancellationTokenSource _tokenSource;
@@ -22,7 +23,15 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override void AddTweenToSequence(Sequence animationSequence)
         {
-            Tween tween = new CallbackTweenAction(PlayAnimation, PlayAnimation, CancelToken).GenerateTween(duration);
+            if (_playbackSpeed == 0)
+            {
+                _playbackSpeed = 1;
+            }
+
+            Tween tween =
+                new CallbackTweenAction(PlayAnimation, OnStepCallback, CancelToken).GenerateTween(
+                    _animationClip.length /
+                    _playbackSpeed);
             tween.SetLoops(_loopCount);
             tween.SetDelay(Delay);
 
@@ -37,8 +46,19 @@ namespace BrunoMikoski.AnimationSequencer
             if (_tokenSource != null)
                 CancelToken();
 
+
             _tokenSource = new CancellationTokenSource();
             PlayAnimationHandler(_tokenSource.Token);
+        }
+
+        private void OnStepCallback()
+        {
+            if (_loopCount == 0)
+            {
+                return;
+            }
+
+            PlayAnimation();
         }
 
         private async void PlayAnimationHandler(CancellationToken ct)
@@ -52,19 +72,21 @@ namespace BrunoMikoski.AnimationSequencer
 
                 _animationClip.legacy = false;
 
+
                 playable = AnimationPlayableUtilities.PlayClip(_animator, _animationClip, out PlayableGraph _);
-                playable.SetDuration(duration);
-                playable.SetSpeed(_animationClip.length / duration);
+                playable.SetDuration(_animationClip.length/_playbackSpeed);
+
+                playable.SetSpeed(_playbackSpeed);
                 //playable.SetSpeed(_speed);
 
-                await UniTask.Delay((int) (duration * 1000), cancellationToken: ct);
-                
+                await UniTask.Delay((int) (_animationClip.length * 1000), cancellationToken: ct);
             }
             catch (OperationCanceledException e)
             {
             }
             finally
             {
+                
                 playable.Pause();
                 playable.Destroy();
             }
@@ -84,13 +106,13 @@ namespace BrunoMikoski.AnimationSequencer
                 _tokenSource = null;
             }
         }
-        
+
         public override string GetDisplayNameForEditor(int index)
         {
             string clipName = "Animation";
             if (_animationClip != null)
                 clipName = _animationClip.name;
-            
+
             return $"{index}. Play {clipName} Clip";
         }
     }
