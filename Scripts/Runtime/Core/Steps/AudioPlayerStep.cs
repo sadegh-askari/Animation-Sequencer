@@ -11,7 +11,7 @@ namespace BrunoMikoski.AnimationSequencer
         [SerializeField] private AudioPlayer _audioPlayer;
         [SerializeField] private float _duration = 1;
         [SerializeField] private bool _stopWhenOver;
-        
+
         private AudioHandle? _audioHandle;
         public override string DisplayName => "Audio Player";
 
@@ -38,20 +38,21 @@ namespace BrunoMikoski.AnimationSequencer
         private void PlayAudio()
         {
             _audioHandle?.Stop();
-            _audioHandle = _audioPlayer.Play();
+            if (_audioPlayer != null)
+                _audioHandle = _audioPlayer.Play();
         }
 
         public override void ResetToInitialState()
         {
             StopAudio();
         }
-        
+
         public override string GetDisplayNameForEditor(int index)
         {
             string persistentTargetNames = String.Empty;
             if (_audioPlayer != null)
                 persistentTargetNames = _audioPlayer.name;
-            
+
             return $"{index}. {DisplayName}: {persistentTargetNames}";
         }
     }
