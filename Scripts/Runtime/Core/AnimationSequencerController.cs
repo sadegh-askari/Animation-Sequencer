@@ -103,7 +103,9 @@ namespace BrunoMikoski.AnimationSequencer
             ClearPlayingSequence();
 
             if (onCompleteCallback != null)
+            {
                 onFinishedEvent.AddListener(onCompleteCallback.Invoke);
+            }
 
             playingSequence = GenerateSequence();
             playingSequence.timeScale = timeScale;
@@ -256,6 +258,7 @@ namespace BrunoMikoski.AnimationSequencer
                 return;
 
             playingSequence.Kill(complete);
+            onFinishedEvent.Invoke();
         }
 
         public virtual IEnumerator PlayEnumerator(TweenCancelBehaviour cancelBehaviour)
