@@ -22,13 +22,17 @@ namespace BrunoMikoski.AnimationSequencer
         private void InstantiateObj()
         {
             _initedObj = target != null ? Object.Instantiate(_prefab, target.transform, false) : Object.Instantiate(_prefab);
+            if (target != null)
+            {
+                _initedObj.transform.localPosition = Vector3.zero;
+            }
         }
         public override void ResetToInitialState()
         {
             if (_destroyWhenOver)
                 Object.Destroy(_initedObj);
             else
-                _initedObj.transform.SetParent(null);
+                _initedObj.transform.SetParent(null, true);
         }
 
         public override string GetDisplayNameForEditor(int index)
