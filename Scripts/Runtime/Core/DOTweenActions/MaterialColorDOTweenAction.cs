@@ -12,7 +12,7 @@ namespace BrunoMikoski.AnimationSequencer
         public override Type TargetComponentType => typeof(Renderer);
         public override string DisplayName => "Material Color";
 
-        [SerializeField] private string _propertyName;
+        public string PropertyName;
         [SerializeField] private Color _color;
 
         private int _propertyId;
@@ -23,7 +23,7 @@ namespace BrunoMikoski.AnimationSequencer
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
 
-            _propertyId = Shader.PropertyToID(_propertyName);
+            _propertyId = Shader.PropertyToID(PropertyName);
             if (_targetRenderer == null)
             {
                 _targetRenderer = target.GetComponent<Renderer>();

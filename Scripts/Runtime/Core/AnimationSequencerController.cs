@@ -19,6 +19,8 @@ namespace BrunoMikoski.AnimationSequencer
 
         [SerializeReference]
         private AnimationStepBase[] animationSteps = new AnimationStepBase[0];
+
+        public AnimationStepBase[] Steps => animationSteps;
         [SerializeField]
         private UpdateType updateType = UpdateType.Normal;
         [SerializeField]
