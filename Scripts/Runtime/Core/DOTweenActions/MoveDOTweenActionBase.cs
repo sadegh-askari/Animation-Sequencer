@@ -29,7 +29,7 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 previousPosition = target.transform.localPosition;
                 moveTween = target.transform.DOLocalMove(GetPosition(), duration);
-                
+
             }
             else
             {
@@ -45,6 +45,9 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override void ResetToInitialState()
         {
+            if (previousTarget == null)
+                return;
+
             if (localMove)
                 previousTarget.transform.localPosition = previousPosition;
             else
