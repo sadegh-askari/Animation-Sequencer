@@ -1,5 +1,6 @@
 using DG.Tweening;
 using UnityEngine;
+
 namespace BrunoMikoski.AnimationSequencer
 {
     public class InstantiateObjectClipStep : GameObjectAnimationStep
@@ -9,6 +10,7 @@ namespace BrunoMikoski.AnimationSequencer
         [SerializeField] private bool _destroyWhenOver;
         private GameObject _initedObj;
         public override string DisplayName => "Instantiate Prefab";
+
         public override void AddTweenToSequence(Sequence animationSequence)
         {
             Tween tween = new CallbackTweenAction(InstantiateObj, null, ResetToInitialState).GenerateTween(duration);
@@ -19,6 +21,7 @@ namespace BrunoMikoski.AnimationSequencer
             else
                 animationSequence.Append(tween);
         }
+
         private void InstantiateObj()
         {
             _initedObj = target != null ? Object.Instantiate(_prefab, target.transform, false) : Object.Instantiate(_prefab);
@@ -27,6 +30,7 @@ namespace BrunoMikoski.AnimationSequencer
                 _initedObj.transform.localPosition = Vector3.zero;
             }
         }
+
         public override void ResetToInitialState()
         {
             if (_initedObj == null)
