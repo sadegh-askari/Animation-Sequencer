@@ -29,6 +29,9 @@ namespace BrunoMikoski.AnimationSequencer
         }
         public override void ResetToInitialState()
         {
+            if (_initedObj == null)
+                return;
+
             if (_destroyWhenOver)
                 Object.Destroy(_initedObj);
             else
