@@ -26,6 +26,9 @@ namespace BrunoMikoski.AnimationSequencer
         private Transform previousTarget;
         private Vector3 previousPosition;
 
+        [SerializeField]
+        private bool[] _fixerList; //fix for property drawer in nested class cant show first list
+        
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
             TweenerCore<Vector3, Path, PathOptions> tween;
