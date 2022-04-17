@@ -14,7 +14,7 @@ namespace BrunoMikoski.AnimationSequencer
         //[SerializeField] private float _speed;
         [SerializeField] private AnimationClip _animationClip;
         [SerializeField] private int _loopCount;
-        [SerializeField] private int _playbackSpeed = 1;
+        [SerializeField] private float _playbackSpeed = 1;
 
         private Animator _animator;
         private CancellationTokenSource _tokenSource;
@@ -30,8 +30,8 @@ namespace BrunoMikoski.AnimationSequencer
 
             Tween tween =
                 new CallbackTweenAction(PlayAnimation, OnStepCallback, CancelToken).GenerateTween(
-                    _animationClip.length /
-                    _playbackSpeed);
+                    _animationClip.length/_playbackSpeed);
+
             tween.SetLoops(_loopCount);
             tween.SetDelay(Delay);
 
@@ -79,7 +79,7 @@ namespace BrunoMikoski.AnimationSequencer
                 playable.SetSpeed(_playbackSpeed);
                 //playable.SetSpeed(_speed);
 
-                await UniTask.Delay((int) (_animationClip.length * 1000), cancellationToken: ct);
+                await UniTask.Delay((int) (_animationClip.length/_playbackSpeed * 1000), cancellationToken: ct);
             }
             catch (OperationCanceledException e)
             {
