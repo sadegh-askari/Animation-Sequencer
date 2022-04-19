@@ -77,11 +77,11 @@ namespace BrunoMikoski.AnimationSequencer
         public void Play(TweenCancelBehaviour cancelBehaviour, CancellationToken ct, Action onCompleteCallback = null)
         {
             _cancelBehaviour = cancelBehaviour;
-            ct.RegisterWithoutCaptureExecutionContext(Cancel);
+            ct.RegisterWithoutCaptureExecutionContext(CancelAtCt);
 
             if (ct.IsCancellationRequested)
             {
-                Cancel();
+                CancelAtCt();
                 return;
             }
 
@@ -93,11 +93,15 @@ namespace BrunoMikoski.AnimationSequencer
             if (animationSteps.Length == 0)
                 return;
 
-            //if (playingSequence.ElapsedPercentage() < 1)
-            {
-                //if (_cancelBehaviour == TweenCancelBehaviour.Kill)
-                Kill(_cancelBehaviour == TweenCancelBehaviour.Complete);
-            }
+            Kill(_cancelBehaviour == TweenCancelBehaviour.Complete);
+        }
+        
+        public void CancelAtCt()
+        {
+            if (animationSteps.Length == 0)
+                return;
+
+            Kill();
         }
 
         public virtual void Play(Action onCompleteCallback = null)
@@ -241,7 +245,7 @@ namespace BrunoMikoski.AnimationSequencer
             playingSequence.timeScale = timescale;
             playingSequence.Goto(0);
             playingSequence.PlayForward();
-            
+
             float duration = playingSequence.Duration();
             await UniTask.Delay(TimeSpan.FromSeconds(duration/timescale));
         }
