@@ -8,7 +8,11 @@ namespace BrunoMikoski.AnimationSequencer
     [Serializable]
     public sealed class InvokeCallbackAnimationStep : AnimationStepBase
     {
-        public UnityEvent Callback;// = new UnityEvent();
+        [SerializeField]
+        private UnityEvent callback;// = new UnityEvent();
+
+        public UnityEvent Callback => callback;
+        
         [SerializeField]
         private UnityEvent _resetCallback;
         
@@ -16,7 +20,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override void AddTweenToSequence(Sequence animationSequence)
         {
-            Tween tween = new CallbackTweenAction(null, null, () =>Callback.Invoke()).GenerateTween(0.01f);
+            Tween tween = new CallbackTweenAction(null, null, () =>callback.Invoke()).GenerateTween(0.01f);
             tween.SetDelay(Delay);
 
             if (FlowType == FlowType.Join)
@@ -33,14 +37,14 @@ namespace BrunoMikoski.AnimationSequencer
         public override string GetDisplayNameForEditor(int index)
         {
             string persistentTargetNames = String.Empty;
-            for (int i = 0; i < Callback.GetPersistentEventCount(); i++)
+            for (int i = 0; i < callback.GetPersistentEventCount(); i++)
             {
-                if (Callback.GetPersistentTarget(i) == null)
+                if (callback.GetPersistentTarget(i) == null)
                     continue;
 
                 persistentTargetNames = string.IsNullOrEmpty(persistentTargetNames) ?
-                    Callback.GetPersistentTarget(i).name :
-                    string.Join(", ", Callback.GetPersistentTarget(i).name, persistentTargetNames).Truncate(45);
+                    callback.GetPersistentTarget(i).name :
+                    string.Join(", ", callback.GetPersistentTarget(i).name, persistentTargetNames).Truncate(45);
             }
 
             return $"{index}. {DisplayName}: {persistentTargetNames}";
