@@ -95,14 +95,6 @@ namespace BrunoMikoski.AnimationSequencer
 
             Kill(_cancelBehaviour == TweenCancelBehaviour.Complete);
         }
-        
-        public void CancelAtCt()
-        {
-            if (animationSteps.Length == 0)
-                return;
-
-            Kill();
-        }
 
         public virtual void Play(Action onCompleteCallback = null)
         {
@@ -132,10 +124,16 @@ namespace BrunoMikoski.AnimationSequencer
             }
         }
 
-        public virtual async UniTask PlayAsync()
+        public virtual async UniTask PlayAsync(CancellationToken ct = default)
         {
-            UniTaskCompletionSource cs = new UniTaskCompletionSource();
-            Play(() => cs.TrySetResult());
+            var cs = new UniTaskCompletionSource();
+            ct.Register(Cancel);
+            ct.Register(() => cs.TrySetCanceled());
+            Play(() =>
+            {
+                if (!ct.IsCancellationRequested)
+                    cs.TrySetResult();
+            });
             await cs.Task;
         }
 
