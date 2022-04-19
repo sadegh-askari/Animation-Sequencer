@@ -12,7 +12,7 @@ namespace BrunoMikoski.AnimationSequencer
         public override Type TargetComponentType => typeof(Renderer);
         public override string DisplayName => "Material Color";
 
-        public string PropertyName;
+        public string PropertyName="_AdditiveColor";
         [SerializeField] private Color _color;
 
         private int _propertyId;
