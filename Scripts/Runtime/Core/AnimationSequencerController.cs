@@ -77,7 +77,7 @@ namespace BrunoMikoski.AnimationSequencer
         public void Play(TweenCancelBehaviour cancelBehaviour, CancellationToken ct, Action onCompleteCallback = null)
         {
             _cancelBehaviour = cancelBehaviour;
-            ct.RegisterWithoutCaptureExecutionContext(Cancel);
+            ct.Register(Cancel);
 
             if (ct.IsCancellationRequested)
             {

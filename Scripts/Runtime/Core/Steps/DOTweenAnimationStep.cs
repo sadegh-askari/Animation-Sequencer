@@ -26,9 +26,12 @@ namespace BrunoMikoski.AnimationSequencer
                     continue;
 
                 Tween tween = action.GenerateTween(target, duration);
-                tween.SetDelay(Delay);
-                tween.SetLoops(loopCount, loopType);
-                sequence.Join(tween);
+                if (tween != null)
+                {
+                    tween.SetDelay(Delay);
+                    tween.SetLoops(loopCount, loopType);
+                    sequence.Join(tween);
+                }
             }
 
             if (FlowType == FlowType.Join)
