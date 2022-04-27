@@ -18,6 +18,8 @@ namespace BrunoMikoski.AnimationSequencer
         private Image image;
         private float previousFillAmount;
 
+        public Image Image => image;
+
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
             if (image == null)

@@ -26,26 +26,38 @@ namespace BrunoMikoski.AnimationSequencer
         private Transform previousTarget;
         private Vector3 previousPosition;
 
-        [SerializeField]
-        private bool[] _fixerList; //fix for property drawer in nested class cant show first list
-        
+        [SerializeField] private bool[] _fixerList; //fix for property drawer in nested class cant show first list
+        private GameObject _target;
+
+        private float _duration;
+        TweenerCore<Vector3, Path, PathOptions> tween;
+
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
-            TweenerCore<Vector3, Path, PathOptions> tween;
+            _duration = duration;
+            _target = target;
 
-            previousTarget = target.transform;
+            SetPath(_target.transform);
+
+            return tween;
+        }
+
+        public void SetPath(Transform target)
+        {
+            _duration = 0.8f;
+            Debug.Log("Duration: " + _duration);
+
+            previousTarget = target;
             if (!isLocal)
             {
-                tween = target.transform.DOPath(GetPathPositions(), duration, pathType, pathMode, resolution, gizmoColor);
-                previousPosition = target.transform.position;
+                tween = target.DOPath(GetPathPositions(), _duration, pathType, pathMode, resolution, gizmoColor);
+                previousPosition = target.position;
             }
             else
             {
-                tween = target.transform.DOLocalPath(GetPathPositions(), duration, pathType, pathMode, resolution, gizmoColor);
-                previousPosition = target.transform.localPosition;
+                tween = target.DOLocalPath(GetPathPositions(), _duration, pathType, pathMode, resolution, gizmoColor);
+                previousPosition = target.localPosition;
             }
-
-            return tween;
         }
 
 

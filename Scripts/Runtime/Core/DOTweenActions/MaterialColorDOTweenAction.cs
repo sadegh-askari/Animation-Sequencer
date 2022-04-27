@@ -12,13 +12,14 @@ namespace BrunoMikoski.AnimationSequencer
         public override Type TargetComponentType => typeof(Renderer);
         public override string DisplayName => "Material Color";
 
-        public string PropertyName="_AdditiveColor";
+        public string PropertyName = "_AdditiveColor";
         [SerializeField] private Color _color;
 
         private int _propertyId;
         private Renderer _targetRenderer;
         private Color _previousColor;
-        private Material _material;
+        [SerializeField] private Material _material;
+        [SerializeField] private Material _sharedMaterial;
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
@@ -33,6 +34,9 @@ namespace BrunoMikoski.AnimationSequencer
                 }
             }
 
+            if (_sharedMaterial == null)
+                _sharedMaterial = _targetRenderer.sharedMaterial;
+            
             _material = _targetRenderer.sharedMaterial;
             if (Application.isPlaying)
                 _material = _targetRenderer.material;
@@ -41,6 +45,17 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 _previousColor = _material.GetColor(_propertyId);
                 TweenerCore<Color, Color, ColorOptions> materialTween = _material.DOColor(_color, _propertyId, duration);
+                materialTween.OnComplete(() =>
+                {
+                    _targetRenderer.material = _sharedMaterial;
+                });
+
+                materialTween.OnStart(() =>
+                {
+                    _targetRenderer.material = _material;
+                });
+                
+                _targetRenderer.material = _sharedMaterial;
                 return materialTween;
             }
 
@@ -55,6 +70,8 @@ namespace BrunoMikoski.AnimationSequencer
             if (Application.isPlaying)
                 _material = _targetRenderer.material;
             _material.SetColor(_propertyId, _previousColor);
+
+            _targetRenderer.material = _sharedMaterial;
         }
     }
 }

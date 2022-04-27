@@ -19,6 +19,8 @@ namespace BrunoMikoski.AnimationSequencer
         private Graphic targetGraphic;
         private Color previousColor;
 
+        public Graphic TargetGraphic => targetGraphic;
+
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
             if (targetGraphic == null)
