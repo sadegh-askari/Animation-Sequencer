@@ -17,6 +17,8 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override string DisplayName => "Spine Animation Clip";
 
+        public SkeletonAnimation SkeletonAnimation => _skeletonAnimation;
+
         public override void AddTweenToSequence(Sequence animationSequence)
         {
             Tween tween = new CallbackTweenAction(PlayAnimation, PlayAnimation, StopAnimation).GenerateTween(duration);
