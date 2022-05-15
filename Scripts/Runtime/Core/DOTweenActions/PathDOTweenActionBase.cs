@@ -45,7 +45,6 @@ namespace BrunoMikoski.AnimationSequencer
         public void SetPath(Transform target)
         {
             _duration = 0.8f;
-            Debug.Log("Duration: " + _duration);
 
             previousTarget = target;
             if (!isLocal)
