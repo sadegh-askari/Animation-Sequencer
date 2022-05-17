@@ -9,24 +9,27 @@ namespace BrunoMikoski.AnimationSequencer
     public sealed class InvokeCallbackAnimationStep : AnimationStepBase
     {
         [SerializeField]
-        private UnityEvent callback;// = new UnityEvent();
+        private UnityEvent callback; // = new UnityEvent();
 
         public UnityEvent Callback => callback;
-        
+
         [SerializeField]
         private UnityEvent _resetCallback;
-        
+
         public override string DisplayName => "Invoke Callback";
 
         public override void AddTweenToSequence(Sequence animationSequence)
         {
-            Tween tween = new CallbackTweenAction(null, null, () =>callback.Invoke()).GenerateTween(0.01f);
+            Tween tween = new CallbackTweenAction(null, null, () => callback.Invoke()).GenerateTween(0.01f);
             tween.SetDelay(Delay);
+            
+            Sequence sequence = DOTween.Sequence();
+            sequence.Join(tween);
 
             if (FlowType == FlowType.Join)
-                animationSequence.Join(tween);
+                animationSequence.Join(sequence);
             else
-                animationSequence.Append(tween);
+                animationSequence.Append(sequence);
         }
 
         public override void ResetToInitialState()

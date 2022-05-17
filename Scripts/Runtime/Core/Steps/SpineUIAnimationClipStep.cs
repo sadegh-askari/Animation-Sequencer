@@ -22,11 +22,14 @@ namespace BrunoMikoski.AnimationSequencer
             Tween tween = new CallbackTweenAction(PlayAnimation, PlayAnimation, StopAnimation).GenerateTween(duration);
             tween.SetLoops(_loopCount);
             tween.SetDelay(Delay);
+            
+            Sequence sequence = DOTween.Sequence();
+            sequence.Join(tween);
 
             if (FlowType == FlowType.Join)
-                animationSequence.Join(tween);
+                animationSequence.Join(sequence);
             else
-                animationSequence.Append(tween);
+                animationSequence.Append(sequence);
         }
 
         private void PlayAnimation()

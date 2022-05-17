@@ -30,6 +30,8 @@ namespace BrunoMikoski.AnimationSequencer
         [SerializeField]
         private bool pauseOnAwake;
         [SerializeField]
+        private bool pauseOnDisable;
+        [SerializeField]
         public PlayType playType = PlayType.Forward;
 
         [SerializeField] [Range(0, 10)]
@@ -67,6 +69,12 @@ namespace BrunoMikoski.AnimationSequencer
                 if (pauseOnAwake)
                     playingSequence.Pause();
             }
+        }
+
+        private void OnDisable()
+        {
+            if (pauseOnDisable)
+                playingSequence?.Pause();
         }
 
         private void OnDestroy()

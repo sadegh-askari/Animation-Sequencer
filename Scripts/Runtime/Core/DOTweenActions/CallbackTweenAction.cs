@@ -21,7 +21,8 @@ namespace BrunoMikoski.AnimationSequencer
 
         public Tweener GenerateTween(float duration)
         {
-            TweenerCore<int, int, NoOptions> t = DOTween.To(() => 0, x => _ = x, 1, duration);
+            float temp = 0;
+            TweenerCore<float, float, FloatOptions> t = DOTween.To(() => temp, x => temp = x, 1, duration);
             t.onPlay = _onPlayCallback;
             t.onStepComplete = _onStepCallback;
             t.onComplete = _onCompleteCallback;
