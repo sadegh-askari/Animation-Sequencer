@@ -306,6 +306,9 @@ namespace BrunoMikoski.AnimationSequencer
 
             sequence.SetTarget(this);
             sequence.SetAutoKill(autoKill);
+            if (!autoKill)
+                sequence.SetLink(gameObject);
+            
             sequence.SetUpdate(updateType, timeScaleIndependent);
             sequence.OnStart(() =>
             {
