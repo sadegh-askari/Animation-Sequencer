@@ -65,7 +65,7 @@ namespace BrunoMikoski.AnimationSequencer
                     sharedMatData.Playing = false;
                 }
             }
-            
+
             _material = _targetRenderer.sharedMaterial;
             if (Application.isPlaying)
             {
@@ -83,12 +83,12 @@ namespace BrunoMikoski.AnimationSequencer
                     if (_staticSharedMaterials[_targetRenderer.name].Playing)
                     {
                         TweenerCore<int, int, NoOptions> noOpTween = DOTween.To(() => 0, _ => {}, 1, duration);
-                        
+
                         noOpTween.OnComplete(() =>
                         {
                             _targetRenderer.material = _sharedMaterial;
                         });
-                        
+
                         _targetRenderer.material = _staticSharedMaterials[_targetRenderer.name].Material;
                         return noOpTween;
                     }
@@ -108,6 +108,9 @@ namespace BrunoMikoski.AnimationSequencer
         private Tweener CreateNormalTween(float duration)
         {
             _playing = true;
+
+            if (_material == null)
+                return null;
             
             _previousColor = _material.GetColor(_propertyId);
             TweenerCore<Color, Color, ColorOptions> materialTween = _material.DOColor(_color, _propertyId, duration);
@@ -136,7 +139,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override void ResetToInitialState()
         {
-            if (_targetRenderer == null )
+            if (_targetRenderer == null)
                 return;
 
             if (_playing)
@@ -158,9 +161,11 @@ namespace BrunoMikoski.AnimationSequencer
                     else
                         _material = _targetRenderer.material;
                 }
-                _material.SetColor(_propertyId, _previousColor);
+                
+                if (_material != null)
+                    _material.SetColor(_propertyId, _previousColor);
             }
-            
+
             _targetRenderer.material = _sharedMaterial;
         }
     }
