@@ -113,7 +113,21 @@ namespace BrunoMikoski.AnimationSequencer
                 return null;
             
             _previousColor = _material.GetColor(_propertyId);
-            TweenerCore<Color, Color, ColorOptions> materialTween = _material.DOColor(_color, _propertyId, duration);
+            float ratio = 0;
+            TweenerCore<float, float, FloatOptions> materialTween = DOTween.To(() => ratio, x =>
+            {
+                ratio = x;
+                if (_material != null)
+                {
+                    _material.SetColor(_propertyId, Color.Lerp(_previousColor, _color, ratio));
+                }
+                else
+                {
+                    _targetRenderer.material = _sharedMaterial;
+                }
+
+            }, 1, duration);
+            //TweenerCore<Color, Color, ColorOptions> materialTween = _material.DOColor(_color, _propertyId, duration);
             materialTween.OnComplete(() =>
             {
                 _targetRenderer.material = _sharedMaterial;
