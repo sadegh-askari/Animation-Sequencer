@@ -308,6 +308,7 @@ namespace BrunoMikoski.AnimationSequencer
         public virtual Sequence GenerateSequence()
         {
             Sequence sequence = DOTween.Sequence();
+            sequence.SetLoops(loops, loopType);
 
             for (int i = 0; i < animationSteps.Length; i++)
             {
