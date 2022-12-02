@@ -130,9 +130,27 @@ namespace BrunoMikoski.AnimationSequencer
                     playingSequence.Play();
                     break;
             }
+
+            played = true;
+        }
+
+        private bool played = false;
+        public virtual async UniTask PlayAsync(float timescale, CancellationToken ct = default)
+        {
+            this.timeScale = timescale;
+            await PlayAsync(ct);
         }
 
         public virtual async UniTask PlayAsync(CancellationToken ct = default)
+        {
+//            Debug.LogError("Played: " + played + " " + name);
+            //if (!played)
+                await PlayAsyncInternal(ct);
+            // else
+            //     await ForceRePlayInternal(ct);
+        }
+        
+        private async UniTask PlayAsyncInternal(CancellationToken ct)
         {
             var cs = new UniTaskCompletionSource();
             ct.Register(Cancel);
@@ -144,6 +162,27 @@ namespace BrunoMikoski.AnimationSequencer
             });
             await cs.Task;
         }
+
+        public async UniTask ForcePlay(float timescale = 1)
+        {
+            await ForceRePlayInternal(timescale);
+        }
+
+        private async UniTask ForceRePlayInternal(float timescale)
+        {
+            if (playingSequence == null)
+            {
+                return;
+            }
+
+            playingSequence.timeScale = timescale;
+
+            playingSequence.Goto(0);
+            playingSequence.PlayForward();
+            float duration = playingSequence.Duration();
+            await UniTask.Delay(TimeSpan.FromSeconds(duration/timescale));
+        }
+
 
         public virtual void PlayForward(bool restFirst = true, Action onCompleteCallback = null)
         {
@@ -241,20 +280,6 @@ namespace BrunoMikoski.AnimationSequencer
             await UniTask.Delay(TimeSpan.FromSeconds(duration/rewindTimescale));
         }
 
-        public virtual async UniTask ForcePlay(float timescale = 1)
-        {
-            if (playingSequence == null)
-            {
-                return;
-            }
-
-            playingSequence.timeScale = timescale;
-            playingSequence.Goto(0);
-            playingSequence.PlayForward();
-
-            float duration = playingSequence.Duration();
-            await UniTask.Delay(TimeSpan.FromSeconds(duration/timescale));
-        }
 
         public virtual void Rewind(bool includeDelay = true)
         {
@@ -283,6 +308,7 @@ namespace BrunoMikoski.AnimationSequencer
         public virtual Sequence GenerateSequence()
         {
             Sequence sequence = DOTween.Sequence();
+            sequence.SetLoops(loops, loopType);
 
             for (int i = 0; i < animationSteps.Length; i++)
             {
@@ -306,6 +332,9 @@ namespace BrunoMikoski.AnimationSequencer
 
             sequence.SetTarget(this);
             sequence.SetAutoKill(autoKill);
+            if (!autoKill)
+                sequence.SetLink(gameObject);
+
             sequence.SetUpdate(updateType, timeScaleIndependent);
             sequence.OnStart(() =>
             {

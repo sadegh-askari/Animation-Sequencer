@@ -77,7 +77,7 @@ namespace BrunoMikoski.AnimationSequencer
 
 
                 playable = AnimationPlayableUtilities.PlayClip(_animator, _animationClip, out PlayableGraph _);
-                playable.SetDuration(_animationClip.length/_playbackSpeed);
+                //playable.SetDuration(_animationClip.length/_playbackSpeed);
 
                 playable.SetSpeed(_playbackSpeed);
                 //playable.SetSpeed(_speed);
