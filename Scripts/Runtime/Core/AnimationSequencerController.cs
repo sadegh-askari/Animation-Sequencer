@@ -26,6 +26,8 @@ namespace BrunoMikoski.AnimationSequencer
         [SerializeField]
         private bool timeScaleIndependent = false;
         [SerializeField]
+        private bool playOnEnable;
+        [SerializeField]
         private bool playOnAwake;
         [SerializeField]
         private bool pauseOnAwake;
@@ -61,6 +63,14 @@ namespace BrunoMikoski.AnimationSequencer
         public bool IsPlaying => playingSequence != null && playingSequence.IsActive() && playingSequence.IsPlaying();
         public bool IsPaused => playingSequence != null && playingSequence.IsActive() && !playingSequence.IsPlaying();
 
+        public void OnEnable()
+        {
+            if (playOnEnable)
+            {
+                Play();
+            }
+        }
+        
         public virtual void Awake()
         {
             if (playOnAwake)
@@ -186,7 +196,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         public virtual void PlayForward(bool restFirst = true, Action onCompleteCallback = null)
         {
-            if (playingSequence == null)
+            if (playingSequence == null || !playingSequence.IsActive())
                 Play();
 
             if (onCompleteCallback != null)
@@ -200,7 +210,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         public virtual void PlayBackwards(bool completeFirst = true, Action onCompleteCallback = null)
         {
-            if (playingSequence == null)
+            if (playingSequence == null || !playingSequence.IsActive())
                 Play();
 
             if (onCompleteCallback != null)

@@ -44,7 +44,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         public void SetPath(Transform target)
         {
-            _duration = 0.8f;
+            //_duration = 0.8f;
 
             previousTarget = target;
             if (!isLocal)
