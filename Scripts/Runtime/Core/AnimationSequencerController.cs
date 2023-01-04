@@ -208,7 +208,7 @@ namespace BrunoMikoski.AnimationSequencer
             playingSequence.PlayForward();
         }
 
-        public virtual void PlayBackwards(bool completeFirst = true, Action onCompleteCallback = null)
+        public virtual void PlayBackwards(bool completeFirst = true, float timeScale = 1, Action onCompleteCallback = null)
         {
             if (playingSequence == null || !playingSequence.IsActive())
                 Play();
@@ -219,7 +219,11 @@ namespace BrunoMikoski.AnimationSequencer
             if (completeFirst)
                 SetProgress(1);
 
-            playingSequence.PlayBackwards();
+            if (playingSequence != null)
+            {
+                playingSequence.timeScale = timeScale;
+                playingSequence.PlayBackwards();
+            }
         }
 
         public virtual void SetTime(float seconds, bool andPlay = true)
