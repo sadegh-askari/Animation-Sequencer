@@ -205,6 +205,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (restFirst)
                 SetProgress(0);
 
+            playingSequence.timeScale = 1;
             playingSequence.PlayForward();
         }
 
