@@ -15,11 +15,13 @@ namespace BrunoMikoski.AnimationSequencer
         [SerializeField] private AnimationReferenceAsset _animationRefrence;
         [SerializeField] private int _loopCount;
 
+        private bool _played;
+        
         public override string DisplayName => "Spine UI Animation Clip";
 
         public override void AddTweenToSequence(Sequence animationSequence)
         {
-            Tween tween = new CallbackTweenAction(PlayAnimation, PlayAnimation, StopAnimation).GenerateTween(duration);
+            Tween tween = new CallbackTweenAction(PlayAnimation, PlayStepAnimation, StopAnimation).GenerateTween(duration);
             tween.SetLoops(_loopCount);
             tween.SetDelay(Delay);
             
@@ -31,9 +33,21 @@ namespace BrunoMikoski.AnimationSequencer
             else
                 animationSequence.Append(sequence);
         }
+        
+        private void PlayStepAnimation()
+        {
+            //Debug.LogError("Step: " + _animationRefrence.name);
+            if (_loopCount == 0 && _played)
+                return;
+
+            PlayAnimation();
+        }
 
         private void PlayAnimation()
         {
+            //Debug.LogError("Play: " + _animationRefrence.name);
+            _played = true;
+            
             bool loop = _loopCount != 0;
             //_skeletonAnimation.AnimationState.SetEmptyAnimation(0, 0);
             TrackEntry entry = _skeletonAnimation.AnimationState.SetAnimation(0, _animationRefrence, loop);
@@ -42,12 +56,15 @@ namespace BrunoMikoski.AnimationSequencer
 
         private void StopAnimation()
         {
-            _skeletonAnimation.AnimationState.SetEmptyAnimation(0, 0);
+            _played = false;
+            //_skeletonAnimation.AnimationState.SetEmptyAnimation(0, 0);
+            //Debug.LogError("Complete: " + _animationRefrence.name);
         }
         
         public override void ResetToInitialState()
         {
-            StopAnimation();
+            //Debug.LogError("ResetState: " + _animationRefrence.name);
+           // StopAnimation();
         }
         
         public override string GetDisplayNameForEditor(int index)

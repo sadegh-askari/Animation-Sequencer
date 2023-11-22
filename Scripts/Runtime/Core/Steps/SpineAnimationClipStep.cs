@@ -16,13 +16,13 @@ namespace BrunoMikoski.AnimationSequencer
         [SerializeField] private int _loopCount;
 
         public override string DisplayName => "Spine Animation Clip";
+        private bool _played;
 
         public SkeletonAnimation SkeletonAnimation => _skeletonAnimation;
-        private bool _played = false;
 
         public override void AddTweenToSequence(Sequence animationSequence)
         {
-            Tween tween = new CallbackTweenAction(PlayAnimation, PlayAnimation, StopAnimation).GenerateTween(duration);
+            Tween tween = new CallbackTweenAction(PlayAnimation, PlayStepAnimation, StopAnimation).GenerateTween(duration);
             tween.SetLoops(_loopCount);
             tween.SetDelay(Delay);
 
@@ -35,13 +35,18 @@ namespace BrunoMikoski.AnimationSequencer
                 animationSequence.Append(sequence);
         }
 
+        private void PlayStepAnimation()
+        {
+            if (_loopCount == 0 && _played)
+                return;
+
+            PlayAnimation();
+        }
+
         private void PlayAnimation()
         {
-            bool loop = _loopCount != 0;
-            if (!loop && _played)
-                return;
-            
             _played = true;
+            bool loop = _loopCount != 0;
             _skeletonAnimation.AnimationState.SetEmptyAnimation(0, 0);
             TrackEntry entry = _skeletonAnimation.AnimationState.SetAnimation(0, _animationRefrence, loop);
         }
