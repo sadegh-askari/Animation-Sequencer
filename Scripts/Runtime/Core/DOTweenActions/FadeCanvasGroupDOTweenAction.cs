@@ -20,8 +20,11 @@ namespace BrunoMikoski.AnimationSequencer
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
+
             if (canvasGroup == null)
             {
+                if (target==null)
+                    return null;
                 canvasGroup = target.GetComponent<CanvasGroup>();
 
                 if (canvasGroup == null)
