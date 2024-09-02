@@ -14,8 +14,8 @@ namespace BrunoMikoski.AnimationSequencer
         [SerializeField]
         private AxisConstraint axisConstraint;
         
-        private RectTransform rectTransform;
-        private Vector2 previousAnchorPosition;
+        protected RectTransform rectTransform;
+        protected Vector2 previousAnchorPosition;
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {

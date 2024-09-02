@@ -17,39 +17,26 @@ namespace BrunoMikoski.AnimationSequencer
             Backward
         }
 
-        [SerializeReference]
-        private AnimationStepBase[] animationSteps = new AnimationStepBase[0];
+        [SerializeReference] private AnimationStepBase[] animationSteps = new AnimationStepBase[0];
 
         public AnimationStepBase[] Steps => animationSteps;
-        [SerializeField]
-        private UpdateType updateType = UpdateType.Normal;
-        [SerializeField]
-        private bool timeScaleIndependent = false;
-        [SerializeField]
-        private bool playOnEnable;
-        [SerializeField]
-        private bool playOnAwake;
-        [SerializeField]
-        private bool pauseOnAwake;
-        [SerializeField]
-        private bool pauseOnDisable;
-        [SerializeField]
-        public PlayType playType = PlayType.Forward;
+        [SerializeField] private UpdateType updateType = UpdateType.Normal;
+        [SerializeField] private bool timeScaleIndependent = false;
+        [SerializeField] private bool playOnEnable;
+        [SerializeField] private bool playOnAwake;
+        [SerializeField] private bool pauseOnAwake;
+        [SerializeField] private bool pauseOnDisable;
+        [SerializeField] public PlayType playType = PlayType.Forward;
 
-        [SerializeField] [Range(0, 10)]
-        private float timeScale = 1;
+        [SerializeField] [Range(0, 10)] private float timeScale = 1;
 
         public float TimeScale => timeScale;
 
-        [SerializeField]
-        private int loops = 0;
-        [SerializeField]
-        private LoopType loopType = LoopType.Restart;
-        [SerializeField]
-        private bool autoKill = true;
+        [SerializeField] private int loops = 0;
+        [SerializeField] private LoopType loopType = LoopType.Restart;
+        [SerializeField] private bool autoKill = true;
 
-        [SerializeField]
-        private UnityEvent onStartEvent = new UnityEvent();
+        [SerializeField] private UnityEvent onStartEvent = new UnityEvent();
         public UnityEvent OnStartEvent => onStartEvent;
         [SerializeField] private UnityEvent onFinishedEvent = new UnityEvent();
         public UnityEvent OnFinishedEvent => onFinishedEvent;
@@ -70,7 +57,7 @@ namespace BrunoMikoski.AnimationSequencer
                 Play();
             }
         }
-        
+
         public virtual void Awake()
         {
             if (playOnAwake)
@@ -114,6 +101,11 @@ namespace BrunoMikoski.AnimationSequencer
             Kill(_cancelBehaviour == TweenCancelBehaviour.Complete);
         }
 
+        public void Play()
+        {
+            Play(null);
+        }
+
         public virtual void Play(Action onCompleteCallback = null)
         {
             ClearPlayingSequence();
@@ -145,6 +137,7 @@ namespace BrunoMikoski.AnimationSequencer
         }
 
         private bool played = false;
+
         public virtual async UniTask PlayAsync(float timescale, CancellationToken ct = default)
         {
             this.timeScale = timescale;
@@ -155,11 +148,11 @@ namespace BrunoMikoski.AnimationSequencer
         {
 //            Debug.LogError("Played: " + played + " " + name);
             //if (!played)
-                await PlayAsyncInternal(ct);
+            await PlayAsyncInternal(ct);
             // else
             //     await ForceRePlayInternal(ct);
         }
-        
+
         private async UniTask PlayAsyncInternal(CancellationToken ct)
         {
             var cs = new UniTaskCompletionSource();
@@ -190,26 +183,46 @@ namespace BrunoMikoski.AnimationSequencer
             playingSequence.Goto(0);
             playingSequence.PlayForward();
             float duration = playingSequence.Duration();
-            await UniTask.Delay(TimeSpan.FromSeconds(duration/timescale));
+            await UniTask.Delay(TimeSpan.FromSeconds(duration / timescale));
         }
 
-
-        public virtual void PlayForward(bool restFirst = true, Action onCompleteCallback = null)
+        public virtual void PlayForward(bool restFirst = true, float timeScale = 1, Action onCompleteCallback = null)
         {
             if (playingSequence == null || !playingSequence.IsActive())
                 Play();
-
+            
             if (onCompleteCallback != null)
                 onFinishedEvent.AddListener(onCompleteCallback.Invoke);
 
             if (restFirst)
                 SetProgress(0);
 
-            playingSequence.timeScale = 1;
+            playingSequence.timeScale = timeScale;
             playingSequence.PlayForward();
         }
 
-        public virtual void PlayBackwards(bool completeFirst = true, float timeScale = 1, Action onCompleteCallback = null)
+        public virtual async UniTask PlayForwardAsync(bool resetFirst = true, float timeScale = 1, CancellationToken ct = default)
+        {
+            try
+            {
+                var cs = new UniTaskCompletionSource();
+                ct.Register(Cancel);
+                ct.Register(() => cs.TrySetCanceled());
+                PlayForward(resetFirst, timeScale, () =>
+                {
+                    if (!ct.IsCancellationRequested)
+                        cs.TrySetResult();
+                });
+                await cs.Task;
+            }
+            catch (Exception)
+            {
+                //ignored
+            }
+        }
+
+        public virtual void PlayBackwards(bool completeFirst = true, float timeScale = 1,
+            Action onCompleteCallback = null)
         {
             if (playingSequence == null || !playingSequence.IsActive())
                 Play();
@@ -233,7 +246,7 @@ namespace BrunoMikoski.AnimationSequencer
                 Play();
 
             float duration = playingSequence.Duration();
-            float progress = Mathf.Clamp01(seconds/duration);
+            float progress = Mathf.Clamp01(seconds / duration);
             SetProgress(progress, andPlay);
         }
 
@@ -292,7 +305,7 @@ namespace BrunoMikoski.AnimationSequencer
             playingSequence.Goto(duration);
             playingSequence.PlayBackwards();
 
-            await UniTask.Delay(TimeSpan.FromSeconds(duration/rewindTimescale));
+            await UniTask.Delay(TimeSpan.FromSeconds(duration / rewindTimescale));
         }
 
 

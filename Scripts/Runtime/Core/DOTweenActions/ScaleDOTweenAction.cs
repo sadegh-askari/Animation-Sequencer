@@ -22,6 +22,9 @@ namespace BrunoMikoski.AnimationSequencer
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
+            if (target == null)
+                return null;
+            
             previousState = target.transform.localScale;
             previousTarget = target;
             
@@ -34,6 +37,9 @@ namespace BrunoMikoski.AnimationSequencer
         public override void ResetToInitialState()
         {
             if (!previousState.HasValue)
+                return;
+            
+            if (previousTarget == null)
                 return;
 
             previousTarget.transform.localScale = previousState.Value;

@@ -28,19 +28,19 @@ namespace BrunoMikoski.AnimationSequencer
             if (local)
             {
                 previousRotation = target.transform.localRotation;
-                localTween = target.transform.DOLocalRotate(GetRotation(), duration, rotationMode);
+                localTween = target.transform.DOLocalRotate(GetRotation(target.transform), duration, rotationMode);
             }
             else
             {
                 previousRotation = target.transform.rotation;
-                localTween = target.transform.DORotate(GetRotation(), duration, rotationMode);
+                localTween = target.transform.DORotate(GetRotation(target.transform), duration, rotationMode);
             }
 
             return localTween;
         }
 
         
-        protected abstract Vector3 GetRotation();
+        protected abstract Vector3 GetRotation(Transform target);
 
         public override void ResetToInitialState()
         {

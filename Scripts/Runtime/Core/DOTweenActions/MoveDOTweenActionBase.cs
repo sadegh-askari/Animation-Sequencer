@@ -29,7 +29,6 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 previousPosition = target.transform.localPosition;
                 moveTween = target.transform.DOLocalMove(GetPosition(), duration);
-
             }
             else
             {

@@ -422,11 +422,17 @@ namespace BrunoMikoski.AnimationSequencer
                 rect.width -= 10;
                 rect.y -= 4;
 
-                foldout = EditorGUI.BeginFoldoutHeaderGroup(rect, foldout, title);
+                EditorGUI.indentLevel++;
+                foldout = EditorGUI.Foldout(rect, foldout, title);
+                //EditorGUILayout.BeginFadeGroup(foldout ? 1f : 0.001f);
+                //foldout = EditorGUI.BeginFoldoutHeaderGroup(rect, foldout, title);
 
                 if (foldout)
                     additionalInspectorGUI.Invoke();
-                EditorGUI.EndFoldoutHeaderGroup();
+                
+                //EditorGUI.EndFoldoutHeaderGroup();
+                //EditorGUILayout.EndFadeGroup();
+                EditorGUI.indentLevel--;
             }
         }
 

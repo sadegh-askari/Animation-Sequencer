@@ -13,7 +13,7 @@ namespace BrunoMikoski.AnimationSequencer
         [SerializeField]
         private Vector3 eulerAngles;
         
-        protected override Vector3 GetRotation()
+        protected override Vector3 GetRotation(Transform t)
         {
             return eulerAngles;
         }
