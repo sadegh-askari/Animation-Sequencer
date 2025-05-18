@@ -22,6 +22,11 @@
             "name": "com.unity.textmeshpro",
             "expression": "",
             "define": "TMP_ENABLED"
+        },
+        {
+            "name": "com.mnarimani.audoty",
+            "expression": "",
+            "define": "AUDOTY"
         }
     ],
     "noEngineReferences": false
